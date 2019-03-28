@@ -1,0 +1,38 @@
+{
+  "name": "zstd-lib",
+  "version": "1.0.0",
+  "description": "Zstd wrapper for Nodejs",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha -t 5000",
+    "build:dev": "node-gyp -j 16 build --debug",
+    "build": "node-gyp -j 16 build",
+    "rebuild:dev": "node-gyp -j 16 rebuild --debug",
+    "rebuild": "node-gyp -j 16 rebuild",
+    "clean": "node-gyp clean"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/temtum/zstd-lib.git"
+  },
+  "keywords": [
+    "zstd",
+    "compression",
+    "decompression"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/temtum/zstd-lib/issues"
+  },
+  "homepage": "https://github.com/temtum/zstd-lib#readme",
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "nan": "^2.13.2",
+    "nyc": "^13.3.0",
+    "segfault-handler": "^1.0.1"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^5.2.0"
+  }
+}

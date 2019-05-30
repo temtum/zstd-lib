@@ -1,11 +1,6 @@
 zstd-lib [![version](https://img.shields.io/npm/v/zstd-lib.svg)](https://www.npmjs.com/package/zstd-lib) [![ZSTD/v1.3.8](https://img.shields.io/badge/ZSTD-v1.3.8-green.svg)](https://github.com/facebook/zstd/releases/tag/v1.3.8)
 =====
 
-[![Build Status][1]][2]
-
-[1]: https://travis-ci.org/zwb-ict/zstd-lib.svg?branch=master
-[2]: https://travis-ci.org/zwb-ict/zstd-lib
-
 Zstd wrapper for Nodejs
 
 ## Installation

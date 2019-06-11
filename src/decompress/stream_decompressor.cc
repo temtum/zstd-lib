@@ -3,50 +3,49 @@
 
 namespace ZSTD_NODE {
 
-  using Nan::SetPrototypeMethod;
-  using Nan::GetCurrentContext;
-  using Nan::AsyncQueueWorker;
-  using Nan::GetFunction;
-  using Nan::HandleScope;
-  using Nan::ObjectWrap;
-  using Nan::NewBuffer;
-  using Nan::Callback;
-  using Nan::Has;
-  using Nan::Get;
-  using Nan::Set;
+  using Napi::SetPrototypeMethod;
+  using Napi::GetCurrentContext;
+  using Napi::AsyncQueueWorker;
+  using Napi::GetFunction;
+  using Napi::HandleScope;
+  using Napi::ObjectWrap;
+  using Napi::NewBuffer;
+  using Napi::FunctionReference;
+  using Napi::Has;
+  using Napi::Get;
+  using Napi::Set;
 
   using node::Buffer::Length;
   using node::Buffer::Data;
 
-  using v8::FunctionTemplate;
-  using v8::Number;
-  using v8::String;
-  using v8::Local;
-  using v8::Value;
+  using Napi::FunctionReference;
+  using Napi::Number;
+  using Napi::String;
+    using Napi::Value;
 
-  NAN_MODULE_INIT(StreamDecompressor::Init) {
-    Local<FunctionTemplate> tpl = Nan::New<FunctionTemplate>(New);
-    tpl->SetClassName(Nan::New("StreamDecompressor").ToLocalChecked());
-    tpl->InstanceTemplate()->SetInternalFieldCount(1);
+  Napi::Object StreamDecompressor::Init(Napi::Env env, Napi::Object exports) {
+    Napi::FunctionReference tpl = Napi::Function::New(env, New);
+    tpl->SetClassName(Napi::String::New(env, "StreamDecompressor"));
+
 
     SetPrototypeMethod(tpl, "getBlockSize", GetBlockSize);
     SetPrototypeMethod(tpl, "copy", Copy);
     SetPrototypeMethod(tpl, "decompress", Decompress);
 
-    constructor().Reset(GetFunction(tpl).ToLocalChecked());
-    Set(target, Nan::New("StreamDecompressor").ToLocalChecked(),
-        GetFunction(tpl).ToLocalChecked());
+    constructor().Reset(GetFunction(tpl));
+    Set(target, Napi::String::New(env, "StreamDecompressor"),
+        GetFunction(tpl));
   }
 
-  StreamDecompressor::StreamDecompressor(Local<Object> userParams) : zds(NULL), dict(NULL) {
+  StreamDecompressor::StreamDecompressor(Napi::Object userParams) : zds(NULL), dict(NULL) {
     HandleScope scope;
 
     size_t dictSize = 0;
 
-    Local<String> key;
-    key = Nan::New<String>("dict").ToLocalChecked();
-    if (Has(userParams, key).FromJust()) {
-      Local<Object> dictBuf = Get(userParams, key).ToLocalChecked()->ToObject(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::Object>());
+    Napi::String key;
+    key = Napi::String::New(env, "dict");
+    if (Has(userParams, key)) {
+      Napi::Object dictBuf = Get(userParams, key)->ToObject(Napi::GetCurrentContext()).FromMaybe(Napi::Object());
       dictSize = Length(dictBuf);
       dict = alloc.Alloc(dictSize);
       memcpy(dict, Data(dictBuf), dictSize);
@@ -83,22 +82,23 @@ namespace ZSTD_NODE {
     ZSTD_freeDStream(zds);
   }
 
-  NAN_METHOD(StreamDecompressor::New) {
+  Napi::Value StreamDecompressor::New(const Napi::CallbackInfo& info) {
     if (!info.IsConstructCall()) {
-      return Nan::ThrowError("StreamDecompressor() must be called as a constructor");
+      Napi::Error::New(env, "StreamDecompressor() must be called as a constructor").ThrowAsJavaScriptException();
+      return env.Null();
     }
-    StreamDecompressor *sd = new StreamDecompressor(info[0]->ToObject(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::Object>()));
+    StreamDecompressor *sd = new StreamDecompressor(info[0].ToObject(Napi::GetCurrentContext()).FromMaybe(Napi::Object()));
     sd->Wrap(info.This());
-    info.GetReturnValue().Set(info.This());
+    return info.This();
   }
 
-  NAN_METHOD(StreamDecompressor::GetBlockSize) {
-    info.GetReturnValue().Set(Nan::New<Number>(ZSTD_DStreamInSize()));
+  Napi::Value StreamDecompressor::GetBlockSize(const Napi::CallbackInfo& info) {
+    return Napi::Number::New(env, ZSTD_DStreamInSize());
   }
 
-  NAN_METHOD(StreamDecompressor::Copy) {
+  Napi::Value StreamDecompressor::Copy(const Napi::CallbackInfo& info) {
     StreamDecompressor* sd = ObjectWrap::Unwrap<StreamDecompressor>(info.Holder());
-    Local<Object> chunkBuf = info[0]->ToObject(Nan::GetCurrentContext()).FromMaybe(v8::Local<v8::Object>());
+    Napi::Object chunkBuf = info[0].ToObject(Napi::GetCurrentContext()).FromMaybe(Napi::Object());
     char *chunk = Data(chunkBuf);
     size_t chunkSize = Length(chunkBuf);
     if (chunkSize != 0) {
@@ -111,10 +111,10 @@ namespace ZSTD_NODE {
     }
   }
 
-  NAN_METHOD(StreamDecompressor::Decompress) {
+  Napi::Value StreamDecompressor::Decompress(const Napi::CallbackInfo& info) {
     StreamDecompressor* sd = ObjectWrap::Unwrap<StreamDecompressor>(info.Holder());
-    bool isAsync = info[1]->BooleanValue(Nan::GetCurrentContext()).FromJust();
-    Callback *callback = new Callback(info[0].As<Function>());
+    bool isAsync = info[1].BooleanValue(Napi::GetCurrentContext());
+    Callback *callback = new Callback(info[0].As<Napi::Function>());
     StreamDecompressWorker *worker = new StreamDecompressWorker(callback, sd);
     if (isAsync) {
       AsyncQueueWorker(worker);

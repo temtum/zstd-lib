@@ -2,13 +2,12 @@
 
 namespace ZSTD_NODE {
 
-  using Nan::HandleScope;
-  using Nan::Callback;
-  using Nan::Error;
+  using Napi::HandleScope;
+  using Napi::FunctionReference;
+  using Napi::Error;
 
-  using v8::String;
-  using v8::Local;
-  using v8::Value;
+  using Napi::String;
+    using Napi::Value;
 
   StreamCompressWorker::StreamCompressWorker(Callback *callback, StreamCompressor* sc, bool isLast)
     : AsyncWorker(callback), sc(sc), isLast(isLast) {
@@ -21,7 +20,7 @@ namespace ZSTD_NODE {
   void StreamCompressWorker::Execute() {
     while (zInBuf.pos < zInBuf.size) {
       zOutBuf.pos = 0;
-      ret = ZSTD_compressStream(sc->zcs, &zOutBuf, &zInBuf);
+      ret = ZSTD_compressStream(sc->zcs, &zOnpm install node-addon-apiutBuf, &zInBuf);
       if (ZSTD_isError(ret)) {
         SetErrorMessage(ZSTD_getErrorName(ret));
         return;
@@ -52,12 +51,12 @@ namespace ZSTD_NODE {
     sc->pending_output.push_back(output);
   }
 
-  void StreamCompressWorker::HandleOKCallback() {
+  void StreamCompressWorker::OnOK() {
     HandleScope scope;
 
     const int argc = 2;
-    Local<Value> argv[argc] = {
-      Nan::Null(),
+    Napi::Value argv[argc] = {
+      env.Null(),
       sc->PendingChunksAsArray()
     };
     callback->Call(argc, argv, async_resource);
@@ -65,12 +64,12 @@ namespace ZSTD_NODE {
     sc->alloc.ReportMemoryToV8();
   }
 
-  void StreamCompressWorker::HandleErrorCallback() {
+  void StreamCompressWorker::OnError() {
     HandleScope scope;
 
     const int argc = 1;
-    Local<Value> argv[argc] = {
-      Error(Nan::New<String>(ErrorMessage()).ToLocalChecked())
+    Napi::Value argv[argc] = {
+      Error(Napi::String::New(env, ErrorMessage()))
     };
     callback->Call(argc, argv, async_resource);
 

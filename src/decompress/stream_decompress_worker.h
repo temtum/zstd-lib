@@ -1,13 +1,14 @@
 #ifndef STREAM_DECOMPRESSOR_WORKER_H
 #define STREAM_DECOMPRESSOR_WORKER_H
 
-#include <nan.h>
+#include <napi.h>
+#include <uv.h>
 #include "stream_decompressor.h"
 
 namespace ZSTD_NODE {
 
-  using Nan::AsyncWorker;
-  using Nan::Callback;
+  using Napi::AsyncWorker;
+  using Napi::FunctionReference;
 
   class StreamDecompressWorker : public AsyncWorker {
   public:
@@ -15,8 +16,8 @@ namespace ZSTD_NODE {
     ~StreamDecompressWorker();
 
     void Execute();
-    void HandleOKCallback();
-    void HandleErrorCallback();
+    void OnOK();
+    void OnError();
 
   private:
     void pushToPendingOutput();

@@ -2,13 +2,12 @@
 
 namespace ZSTD_NODE {
 
-  using Nan::HandleScope;
-  using Nan::Callback;
-  using Nan::Error;
+  using Napi::HandleScope;
+  using Napi::FunctionReference;
+  using Napi::Error;
 
-  using v8::String;
-  using v8::Local;
-  using v8::Value;
+  using Napi::String;
+    using Napi::Value;
 
   StreamDecompressWorker::StreamDecompressWorker(Callback *callback, StreamDecompressor* sd)
     : AsyncWorker(callback), sd(sd) {
@@ -42,12 +41,12 @@ namespace ZSTD_NODE {
     sd->pending_output.push_back(output);
   }
 
-  void StreamDecompressWorker::HandleOKCallback() {
+  void StreamDecompressWorker::OnOK() {
     HandleScope scope;
 
     const int argc = 2;
-    Local<Value> argv[argc] = {
-      Nan::Null(),
+    Napi::Value argv[argc] = {
+      env.Null(),
       sd->PendingChunksAsArray()
     };
     callback->Call(argc, argv, async_resource);
@@ -55,12 +54,12 @@ namespace ZSTD_NODE {
     sd->alloc.ReportMemoryToV8();
   }
 
-  void StreamDecompressWorker::HandleErrorCallback() {
+  void StreamDecompressWorker::OnError() {
     HandleScope scope;
 
     const int argc = 1;
-    Local<Value> argv[argc] = {
-      Error(Nan::New<String>(ErrorMessage()).ToLocalChecked())
+    Napi::Value argv[argc] = {
+      Error(Napi::String::New(env, ErrorMessage()))
     };
     callback->Call(argc, argv, async_resource);
 

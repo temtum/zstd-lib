@@ -1,11 +1,12 @@
-#include <nan.h>
+#include <napi.h>
+#include <uv.h>
 #include "stream_decompressor.h"
 
 namespace ZSTD_NODE {
 
-  NAN_MODULE_INIT(Init) {
-    StreamDecompressor::Init(target);
+  Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    StreamDecompressor::Init(env, target, module);
   }
 
-  NODE_MODULE(decompressor, Init)
+  NODE_API_MODULE(decompressor, Init)
 }

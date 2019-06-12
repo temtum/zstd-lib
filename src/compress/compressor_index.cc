@@ -4,8 +4,9 @@
 
 namespace ZSTD_NODE {
 
-  Napi::Object Init(Napi::Env env, Napi::Object exports) {
-    StreamCompressor::Init(env, target, module);
+  Napi::Object Init (Napi::Env env, Napi::Object exports) {
+      StreamCompressor::Init(env, exports);
+      return exports;
   }
 
   NODE_API_MODULE(compressor, Init)

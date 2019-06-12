@@ -10,8 +10,6 @@
 
 namespace ZSTD_NODE {
 
-  using Napi::Persistent;
-
   using Napi::Function;
   using Napi::Object;
   
@@ -21,6 +19,7 @@ namespace ZSTD_NODE {
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
 
   private:
+    static Napi::FunctionReference constructor;
     explicit StreamCompressor(Napi::Object userParams);
     ~StreamCompressor();
 
@@ -28,8 +27,6 @@ namespace ZSTD_NODE {
     static Napi::Value GetBlockSize(const Napi::CallbackInfo& info);
     static Napi::Value Copy(const Napi::CallbackInfo& info);
     static Napi::Value Compress(const Napi::CallbackInfo& info);
-
-    static inline Persistent<Function>& constructor();
 
     ZSTD_CStream *zcs;
 

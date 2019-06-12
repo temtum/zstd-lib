@@ -7,9 +7,9 @@ namespace ZSTD_NODE {
   using Napi::Error;
 
   using Napi::String;
-    using Napi::Value;
+  using Napi::Value;
 
-  StreamCompressWorker::StreamCompressWorker(Callback *callback, StreamCompressor* sc, bool isLast)
+  StreamCompressWorker::StreamCompressWorker(FunctionReference *callback, StreamCompressor* sc, bool isLast)
     : AsyncWorker(callback), sc(sc), isLast(isLast) {
     zInBuf = {sc->input, sc->inPos, 0};
     zOutBuf = {sc->dst, sc->dstSize, 0};

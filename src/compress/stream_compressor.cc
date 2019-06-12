@@ -3,7 +3,6 @@
 
 namespace ZSTD_NODE {
 
-  using Napi::SetPrototypeMethod;
   using Napi::GetCurrentContext;
   using Napi::AsyncQueueWorker;
   using Napi::GetFunction;
@@ -21,16 +20,15 @@ namespace ZSTD_NODE {
   using Napi::FunctionReference;
   using Napi::Number;
   using Napi::String;
-    using Napi::Value;
+  using Napi::Value;
 
   Napi::Object StreamCompressor::Init(Napi::Env env, Napi::Object exports) {
     Napi::FunctionReference tpl = Napi::Function::New(env, New);
     tpl->SetClassName(Napi::String::New(env, "StreamCompressor"));
 
-
-    SetPrototypeMethod(tpl, "getBlockSize", GetBlockSize);
-    SetPrototypeMethod(tpl, "copy", Copy);
-    SetPrototypeMethod(tpl, "compress", Compress);
+    InstanceMethod("getBlockSize", &GetBlockSize),
+    InstanceMethod("copy", &Copy),
+    InstanceMethod("compress", &Compress),
 
     constructor().Reset(GetFunction(tpl));
     Set(target, Napi::String::New(env, "StreamCompressor"),

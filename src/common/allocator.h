@@ -21,7 +21,7 @@ namespace ZSTD_NODE {
     void Free(void* address);
 
     static AllocatedBuffer* GetBufferInfo(void* address);
-    void ReportMemoryToV8();
+    void ReportMemoryToV8(const Napi::CallbackInfo &info);
 
     static void* Alloc(void* opaque, size_t size);
     static void Free(void* opaque, void* address);

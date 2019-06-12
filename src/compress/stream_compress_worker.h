@@ -12,12 +12,8 @@ namespace ZSTD_NODE {
 
   class StreamCompressWorker : public AsyncWorker {
   public:
-    StreamCompressWorker(Callback *callback, StreamCompressor *sc, bool isLast);
+    StreamCompressWorker(FunctionReference *callback, StreamCompressor *sc, bool isLast);
     ~StreamCompressWorker();
-
-    void Execute();
-    void OnOK();
-    void OnError();
 
   private:
     void pushToPendingOutput();

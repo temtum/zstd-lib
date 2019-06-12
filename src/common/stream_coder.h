@@ -13,16 +13,18 @@ namespace ZSTD_NODE {
 
   using Napi::Array;
   
-  class StreamCoder : public ObjectWrap {
+  class StreamCoder : public Napi::ObjectWrap<StreamCoder> {
+
   public:
+    static Napi::FunctionReference constructor;
+    explicit StreamCoder(const Napi::CallbackInfo &info);
+    ~StreamCoder();
+
+  private:
     Allocator alloc;
 
     vector<char*> pending_output;
-    Napi::Array PendingChunksAsArray();
-
-  protected:
-    explicit StreamCoder();
-    ~StreamCoder();
+    Napi::Array PendingChunksAsArray(const Napi::CallbackInfo &info);
   };
 
 }

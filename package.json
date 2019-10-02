@@ -27,8 +27,8 @@
   "homepage": "https://github.com/temtum/zstd-lib#readme",
   "dependencies": {
     "bindings": "^1.5.0",
-    "nan": "^2.13.1",
-    "nyc": "^13.3.0",
+    "nan": "^2.14.0",
+    "nyc": "^14.1.1",
     "segfault-handler": "^1.2.0"
   },
   "devDependencies": {
